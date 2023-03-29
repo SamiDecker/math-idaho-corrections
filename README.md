@@ -4,7 +4,10 @@ This is a statistical summary of GED math achievement in Idaho correction facili
 
 
 [View raw data](https://docs.google.com/spreadsheets/d/1C73QFaDrOJ5sgeWfZ8VlRrsJOzECv4qgSFbqdZYZkAw/edit#gid=835589585)
+
 Contents of the repository include: 
 
 - source R markdown file for the report
 - PDF of the compiled report
+
+If you have any questions please contact the author Samantha Decker at samanthadecker@u.boisestate.edu
