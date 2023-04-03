@@ -247,7 +247,7 @@ ged %>%
                       "90th <br>Percentile"),
         format = "html",
         escape = FALSE,
-        table.attr = "style ='width:50%;'",
+        table.attr = "style ='width:70%;'",
         align = c("l", "c","c","c","c","c"))
 
 ```
