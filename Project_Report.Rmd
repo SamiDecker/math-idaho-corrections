@@ -1,0 +1,489 @@
+---
+title: "Statistical Summary of Mathematics Achievement in Idaho Corrections Facilities"
+subtitle: "A Project in Partial Fulfillment of the Requirements for the Master of Science Degree in Mathematics, Boise State University"
+author: "Samantha Decker"
+date: "April 12, 2023"
+output: html_document
+---
+<style type="text/css">
+p{
+  font-size: 12pt;
+}
+h1.title{font-size: 18pt;
+}
+.subtitle{font-size: 14pt;
+}
+h1{font-size: 14pt;
+font-weight: bold;
+}
+h2{font-size: 12pt;
+}
+table{break-inside: avoid !important;
+margin-bottom: 12pt;
+}
+caption{font-size: 13pt;
+font-style: italic;
+padding-top: 12pt;
+}
+@media print { 
+a[href]::after { content: none !important; }
+a{color:blue !important;
+font-weight: bold;}
+.pagebreak { page-break-before: always; }
+}
+</style>
+
+
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE , message = FALSE)
+```
+```{r include = FALSE}
+library(googlesheets4)
+library(tidyverse)
+library(summarytools)
+library(maps) 
+library(knitr)
+
+
+st_options(plain.ascii = FALSE, style = "rmarkdown", footnote = NA)
+
+```
+
+
+
+# Introduction
+
+This paper is about mathematics education in correctional institutions with the primary focus on the Tests of General Education Development (GED) in the prison setting, and the extent to which specific demographics are related to mathematics education outcomes. In Idaho, mathematics courses are available to residents in correctional settings; however, in general, it is up to the person incarcerated to make the decision to be a part of the programs. I am curious to see if there are specific trends in the mathematics achievements of correctional institutions who have a higher percentage of the population of inmates versus those who have a low percentage of their overall population in their education program. At a correctional institution, the GED is used for residents to gain their high school equivalency or potentially, college credit.  The content that is on the GED test will be looked at and how the various scores correlate to passing and beyond. 
+	
+As a student, I have experienced a variety of teaching styles in my own classes and been shown both the advantages and disadvantages of each of these approaches.  Every person learns differently, and I think one thing I have had to learn as a student is what is the best way I can absorb information, specifically in math classes.  This is something that I have utilized as a teacher because I have had experience struggling with the way someone teaches, so I always ask for feedback and suggestions from my students to try and make it the best learning opportunity for everyone. I am curious to explore whether this is something that can really be done in education programs at correctional facilities, or if there is a need for more specific standardized approaches because of the instructional settings.  I think in all fields of study, but especially mathematics, students get frustrated very quickly, so giving students the opportunity to communicate that frustration and access resources so they can understand the topic better could really benefit the residents and their mathematics achievement. 
+	
+As a teacher, I have had the privilege of teaching students from a variety of different backgrounds who are starting their college education journey. I have had students who just finished high school, took a few years off to explore and decide what they want to study in college, people who have been out of school for over twenty years, and people whose first language is not English.  All students have the ability to succeed in the field of mathematics no matter what their situation is or was in the past, and that is something that I try to show all of the students in my classes. I hope the idea of supporting success for all students is something I can continue to use in my future teaching endeavors, whether that is in a traditional classroom or in a different setting, like a correctional facility. 
+ 	
+I have no professional experience in corrections, but I do have some personal experience because I know multiple people who are in the field.  I have seen the education system in a prison setting; however, because my experience is limited, it is something that I am extremely motivated to learn more about.  Once I complete my graduate degree, I hope that I get to use not only the information that I learn through this project, but also the statistical tools that I use in the project in my future work as an educator. I hope to work for the Department of Correction in some capacity in the future and use all of my skills in my future work.
+	
+This project includes background information about correctional education, mathematics literacy, and math teaching in a correctional setting. What education looks like in a correctional setting, how education can impact people in the correctional setting, and what specific tools are used to teach mathematics in correctional settings are talked about in detail. The goal of this project was to explore the any correlations between a resident that passed the mathematics GED in an IDOC facility and various demographics. This was done by obtaining, cleaning, and analyzing data, with the use of *R*, obtained from the Idaho Department of Correction.
+
+# Background and Review of Literature
+
+When talking about correctional education, one of the keywords that is talked about repeatedly is recidivism rates. What this means is essentially the percentage of released inmates who return to prison.  This is something that is generally looked at over a specific amount of time and one of the huge goals of all prison systems is to decrease recidivism rates.  One way that is continually brought up as a way to reduce recidivism is inmate education. We see in a study that inmates with a college level education have a 31% chance of recidivism where inmates with less than a high school diploma have a 56% chance.  This also corresponds heavily to employment once released, where we see 67% of offenders with a college education are employed compared to only 57% of offenders without a high school diploma (Lockwood et al., 2012). From this study and many others like it, we can see how much of an impact education has on the success of the offenders once they are released from prison.  This is one of the big reasons that education is heavily advocated for in correctional settings. 
+
+Relative to other democracies, the United States has an extremely large percentage of its population incarcerated. There are a variety of things that play into an increase in incarceration rates, but one of the main issues is the offenders who keep coming back to prison and how we can keep them from ending up back in prison. The narrowest definition of correctional education makes it about what residents learn in a classroom, but there are so many outside aspects that contribute to what they learn and take away from their time in prison (Carver & Harrison, 2016).  For residents to be the most prepared to reenter society, I think we need to look at not only their education level but also the environment they learned in and lived in. With the information that is now in the world about how much education can help reduce recidivism rates, there is a lot of pressure being put on educators in corrections systems. One reason is because they are “the intersection between offenders and the public” (Carver & Harrison, 2016). This can be a major struggle for educators because they strive to create a positive environment and encourage their students to have those moments of success, however in the environment of a correctional setting, they are faced with negativity and the “institutional” mindset that many of the residents have. 
+
+Teaching in a correctional setting poses new challenges for teachers who have never worked in this kind of environment. It is extremely important for teachers to have both psychological and instructional support from their coworkers and superiors. The environment and students that you will experience inside a prison classroom may be very different from the outside. When it comes to psychological support, there should be trained professionals who can mentor and be a listening ear for the teachers who might be struggling with how they feel about their safety or the expectations that they are now having to meet. In terms of instruction, teachers are working with a very specific group of students that they most likely have not been exposed to before, including all of the challenges that come from trying to find resources and materials to teach lessons with limited resources and availability based on the location of the classroom (Hurkmans & Gillijns, 2012). 
+
+With this information about how difficult it can be to work in a prison, why do corrections teachers want to work there?  We see that the biggest motivation to teach in a correctional setting is the students want to learn and willingness to discuss. We also see a high opportunity for reward and gratification as well as high levels of job satisfaction (Bannon, 2014)
+
+The GED is the General Educational Development test. This is composed of four different subject tests which are; Mathematical Reasoning, Science, Social Studies, and Reasoning Through Language Arts.  When all sections are passed, the test taker is deemed to have obtained high school academic skills or higher. Each section of the test has a range of potential scores between 100 and 200. There are three different classifications of passing scores. GED passing is a 145 to 164 and this is the basic level of passing the test. A score of 165 to 174 is considered a College Ready score which indicates a student has the skills that are needed to take a college class. When a test taker gets a score of 175 or higher, they are College Ready and can earn college credits depending on what college they plan on attending (What Is a Passing GED Test Score?, 2022).  
+
+The Mathematical Reasoning test for the GED focuses on arithmetic, geometry, algebra, and graphs and functions. There are 46 questions on the test and must be completed in 115 minutes.  The test is designed to evaluate the test takers’ application of mathematical properties and formulas rather than memorization.  Test takers receive a formula sheet on the test that has multiple formulas used for calculating perimeter, area, and volume of shapes as well as a variety of commonly used algebra formulas that can be helpful on the test. Problems that fall under the basic math category involve numbers as well as the four basic mathematical operations. Geometry on the test is composed mostly of shapes and various properties of them. The algebra questions on the exam are an extension of the basic math skills but also include exponents and variables. The last question type on the GED math test looks specifically at inputs and outputs of functions. Test takers must know about function notation, what a function is and how to solve it as well as having basic graphing skills (GED®: See What Is On The GED By Test Subject, 2022). 
+
+When residents first enter into an Idaho Department of Correction facility, they are given what is called a Test of Adult Basic Education (TABE) full battery test. TABE is used to evaluate residents’ reading, language, math computation,and applied math skills. It is used to determine a resident's aptitude when entering the facility and gives them a grade designation based on their abilities (Test of Adult Basic Education, 2022; see also Benac, 2019). Based on what grade designation they are given for both the Math and English on the exam, residents are given specific goals and certificates they can work toward while in the facilities.  Some of these include trade work, apprenticeships, and computer literacy (Idaho Department of Correction, 2021). 
+
+# Methods
+The first step for this project was to obtain the desired data. The data for this project came from the Idaho Department of Correction in a variety of formats. Some of it was online for the public to view and some had to be obtained from the department directly. The data that was received is 620 residents who have taken the GED in the department's custody. It has gender, ethnicity, age, GED testing location, GED testing date, GED score, as well as their TABE test date and score. This is for all subjects on both the GED and TABE test. This makes 620 rows and 24 columns. In the data about the testing centers, there are 13 rows and 10 columns which consists of the information; test center abbreviation, test center full name, how many tests were taken at each location, longitude and latitude, overall inmate population in 2019, security level, rider population information, gender of the facility, and the percentage of male inmates if it is a mixed gender population. Finally in the 2019 data that is public record online there are 41 rows and 4 columns which consist of age breakdown, gender, ethnicity, and number in 2019 based on a variety of combinations. 
+
+Once the data was obtained and cleaned, the variables of interest were identified. At this point all data was imported to *R* and the coding portion of this project was done to create a multitude of tables, charts, and graphs for each variable of interest individually and various combinations of variables in relation to the GED mathematics scores received. The most meaningful visuals were inputted into the results and interpreted. 
+
+This report includes charts and statistics which are computed directly from the data sets using the `RMarkdown` format in RStudio (Posit team, 2023). Anyone can verify the calculations by compiling the report; the source code is available on [GitHub at this link](https://github.com/SamiDecker/math-idaho-corrections). Many of the data wrangling, summary, and chart tasks use the grammar of statistical computing from the `tidyverse` package (Wickham et al, 2019) in *R* (R Core Team, 2020).
+
+
+# Data
+```{r, cache=TRUE}
+data_url = "https://docs.google.com/spreadsheets/d/1C73QFaDrOJ5sgeWfZ8VlRrsJOzECv4qgSFbqdZYZkAw/edit#gid=835589585"
+#browseURL(data_url)
+
+
+ged_raw = read_sheet(data_url , sheet = "ged")
+sites_raw = read_sheet(data_url , sheet = "sites")
+demos_raw = read_sheet(data_url , sheet = "overall_2019")
+testers_raw = read_sheet(data_url , sheet = "ged_2018_2021")
+#summary(ged_raw)
+#glimpse(sites_raw)
+```
+
+[View raw data](`r data_url`)
+
+```{r}
+ged = ged_raw %>% 
+  left_join(sites_raw, by = c("loc_ged_math" = "loc")) %>% 
+  mutate(sex = fct_recode(sex, "Male" = "M", "Female" = "F") ,
+         race = fct_recode(race, "White" = "W" , "Hispanic" = "H", "Black" = "B", "Native American" = "NAM", "Asian" = "A", "Other" = "O", "Unknown" = "U"),
+         loc = fct_lump_min(loc_ged_math, 10),
+         security = fct_recode(sec_level,  "Minimum Security \nLevel Facility" = "1:Min" ,
+                                "Minimum and Medium \nSecurity Facility" = "2:Min/Med",  "Medium Security \nFacility"="3:Med"  ,
+                               "Medium and Maximum \nSecurity Facility"="4:Med/Max", "Maxiumum Security \nFacility" ="5:Max","All Security Level \nFacility" ="All"),
+         race = fct_lump_min(race , 10, other_level = "Asian/Other/Unknown"),
+         tabe_breaks = cut(tabe_math, breaks = c(300,441, 500, 535, 575, 616, 800),
+                         labels = c("k-1", "2-3", "4-5", "6-8", "9-10", "11-12")),
+         age_level = cut(age_ged, breaks = c(0,20, 25, 30, 35, 40, Inf),
+                         labels = c("18-20", "21-25", "26-30", "31-35", "36-40", "41+"))) %>% 
+  filter(tabe_math < 1000)
+```
+
+The GED data includes `r nrow(ged_raw)` test takers along with `r ncol(ged_raw)` columns of information about each test taker. The GED scores range from `r min(ged$ged_math)` to `r max(ged$ged_math)` (M = `r round(mean(ged$ged_math),1)`, SD = `r round(sd(ged$ged_math),1)`. Test takers range in age from `r min(ged$age_ged)` to `r max(ged$age_ged)` (M = `r round(mean(ged$age_ged), 1)`, SD = `r round(sd(ged$age_ged), 1)`). Test takers are classified by sex (Male, Female) and race (White, Hispanic, Black, Native American, Asian , Other, and Unknown). Based on where the test taker passed their mathematics GED test, they are grouped based on facility (CAPP, ICIO, IMSI, ISCC, ISCI, NICI, PWCC, SAWC, SBWCC, SICI, and Other). The final variable being looked at in relation to GED score is the TABE  score. This is a test given to residents when they enter a facility.  It allows IDOC to assess their knowledge in mathematics and RLA. The mathematics TABE  scores range from `r min(ged$tabe_math, na.rm=TRUE)` to `r max(ged$tabe_math, na.rm=TRUE)`(M = `r round(mean(ged$tabe_math,na.rm=TRUE), 1)`, SD = `r round(sd(ged$tabe_math,na.rm=TRUE), 1)`). 
+
+
+
+# Results
+
+We see that males have a higher mean GED score and standard deviation. 
+
+```{r}
+#sex
+ged %>% 
+  group_by(sex) %>% 
+  summarize (n = n(),
+             mean = mean(ged_math),
+             sd = sd(ged_math),
+             p10 = quantile(ged_math, .1),
+             p90 = quantile(ged_math, .9)) %>% 
+  kable(digits = 1, caption = "GED Distribution by Gender",
+        col.names = c("Gender", "n", "Mean", "SD", "10th <br>Percentile",
+                      "90th <br>Percentile"),
+        format = "html",
+        escape = FALSE,
+        table.attr = "style ='width:50%;'",
+        align = c("l", "c","c","c","c","c"))
+```
+
+The 18-20 year old age range has the largest mean and standard deviation where 40+ has the smallest mean and the smallest standard deviation is the the 36-40 age range. The difference between the highest and lowest mean scores is 5 points on the GED.
+
+
+```{r}
+#age
+ged %>% 
+  group_by(age_level) %>% 
+  summarize (n = n(),
+             mean = mean(ged_math),
+             sd = sd(ged_math),
+             p10 = quantile(ged_math, .1),
+             p90 = quantile(ged_math, .9)) %>% 
+  kable(digits = 1, caption = "GED Distribution by Age Level",
+        col.names = c("Age Level", "n", "Mean", "SD", "10th <br>Percentile",
+                      "90th <br>Percentile"),
+        format = "html",
+        escape = FALSE,
+        table.attr = "style ='width:50%;'",
+        align = c("l", "c","c","c","c","c"))
+```
+
+The group with the largest mean and standard deviation is the TABE scores that place in the 11-12 understanding with the smallest mean in k-1 and smallest standard deviation is 2-3 grade range. 
+
+```{r}
+#tabe
+ged %>% 
+  group_by(tabe_breaks) %>% 
+  summarize (n = n(),
+             mean = mean(ged_math),
+             sd = sd(ged_math),
+             p10 = quantile(ged_math, .1),
+             p90 = quantile(ged_math, .9)) %>% 
+  kable(digits = 1, caption = "GED Distribution by TABE Score",
+        col.names = c("TABE Grade <br> Equivalent", "n", "Mean", "SD", "10th <br>Percentile",
+                      "90th <br>Percentile"),
+        format = "html",
+        escape = FALSE,
+        table.attr = "style ='width:50%;'",
+        align = c("l", "c","c","c","c","c"))
+```
+
+<div class="pagebreak"> </div>
+
+The facility ISCC has the highest mean with IMSI having the lowest mean. The highest standard deviation is ISCI and the lowest standard deviation is at IMSI.
+
+```{r}
+#facility
+ged %>% 
+  group_by(loc) %>% 
+  summarize (n = n(),
+             mean = mean(ged_math),
+             sd = sd(ged_math),
+             p10 = quantile(ged_math, .1),
+             p90 = quantile(ged_math, .9)) %>% 
+  kable(digits = 1, caption = "GED Distribution by Facility",
+        col.names = c("Facility", "n", "Mean", "SD", "10th <br>Percentile",
+                      "90th <br>Percentile"),
+        format = "html",
+        escape = FALSE,
+        table.attr = "style ='width:50%;'",
+        align = c("l", "c","c","c","c","c"))
+
+```
+
+The Medium/Maximum security facilities have the highest mean GED score and highest standard deviation. The other security facilities have the lowest mean and standard deviation with the Maximum security facilities close behind. 
+
+```{r}
+#security level
+ged %>% 
+  group_by(sec_level) %>% 
+  summarize (n = n(),
+             mean = mean(ged_math),
+             sd = sd(ged_math),
+             p10 = quantile(ged_math, .1),
+             p90 = quantile(ged_math, .9)) %>% 
+  kable(digits = 1, caption = "GED Distribution by Security Level",
+        col.names = c("Security <br> Level", "n", "Mean", "SD", "10th <br>Percentile",
+                      "90th <br>Percentile"),
+        format = "html",
+        escape = FALSE,
+        table.attr = "style ='width:50%;'",
+        align = c("l", "c","c","c","c","c"))
+```
+
+We see that across all ethnicities, there are very similar mean test scores. White has the largest standard deviation and Asian/Other/Unknown has the highest mean, but it is a very small sample size for that specific population.
+
+```{r}
+#ethnicity
+ged %>% 
+  group_by(race) %>% 
+  summarize (n = n(),
+             mean = mean(ged_math),
+             sd = sd(ged_math),
+             p10 = quantile(ged_math, .1),
+             p90 = quantile(ged_math, .9)) %>% 
+  kable(digits = 1, caption = "GED Distribution by Ethnicity",
+        col.names = c("Facility", "n", "Mean", "SD", "10th <br>Percentile",
+                      "90th <br>Percentile"),
+        format = "html",
+        escape = FALSE,
+        table.attr = "style ='width:50%;'",
+        align = c("l", "c","c","c","c","c"))
+
+```
+
+
+<div class="pagebreak"> </div>
+
+We can see in that based on these maps, facility size based on inmate population does not directly relate to how many GED passers there are at that facility. NICI is a smaller facility, however we can see that they give out a large amount of GED's each year. Unlike ISCC is a large facility but gives out less GED's then the smaller facility NICI.
+
+```{r, fig.width = 7.5, fig.height = 4.25}
+idaho_geo <- map_data("state",regions = "idaho")
+
+# summarize the ged sites for plotting
+ged_by_site <- ged %>% 
+  filter(!is.na(loc_name)) %>% 
+  group_by(loc_name) %>%  
+  summarize( lat = first(lat), 
+             long = first(long), 
+             n_ged = n(), 
+             n_inmates = first(n_inmates)) %>% 
+  mutate(loc_name = fct_reorder(loc_name, -n_inmates)) %>% 
+  pivot_longer(c(n_ged, n_inmates), names_to = "count_type", values_to = "n") %>% 
+  mutate(count_type = gsub("n_","",count_type),
+         count_type = factor(count_type, 
+                             levels = c("inmates","ged"),
+                             labels = c("Inmates", "GED Completers")))
+
+# draw a map of Idaho, adding points for the numbers of inmates at each site
+idaho_geo %>% 
+  ggplot() + 
+  geom_polygon(fill = "#dddddd", size = 1, aes(x = long, y = lat), color = "#333333") + 
+  #coord_sf(crs = 4326, datum = NA) +
+  geom_point(data = ged_by_site, 
+             aes(x = long, y = lat, size = n, color = loc_name),
+             alpha = .5)+
+  scale_size(range = c(2, 10))+
+  labs(size = "Count", color = "Facility")+
+  theme_void()+
+  facet_wrap(vars(count_type)) +
+  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1), order = 1)) +
+  theme(strip.text.x = element_text(size = 14))
+
+
+```
+
+<div class="pagebreak"> </div>
+
+Although we can see a small correlation line, looking at the data points, it is hard to see any sort of correlation between TABE scores and GED mathematics test scores. 
+
+
+```{r}
+#tabe plot
+label_tabe = data.frame(x = c(400,470,515,565,620,700), y = rep(190,6),label = c("K-1","2-3","4-5","6-8","9-10","11-12"))
+ged %>%  
+  ggplot(aes(x = tabe_math,y = ged_math)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm") +
+  lims(x = c(300,800), y = c(140,200)) +
+  geom_vline(xintercept = c(448,495,536,595,656), color = "#999999") +
+  geom_text(data = label_tabe, aes(x = x, y = y, label = label, fill = NULL), color = "#333333", size = 3) +
+  theme_minimal() + 
+  labs(title = "GED distribution by TABE Score", caption = "Lines indicate grade level placement") +
+  theme(legend.position = "top")
+```
+
+<div class="pagebreak"> </div>
+
+We can see that a majority of the passing test takers are male, however they are a much larger percentage of the population so this is not surprising. What is shocking is that the male math test passers are responsible for the higher GED math scores and the bulk of the test takers scores are slightly higher then the females. 
+
+```{r}
+#gender plot
+label_ged = data.frame(x = c(155,170,180), y = rep(1.5,3),label = c("High school\nEquivalent", "College Ready", "College Credit"))
+ged %>%  
+  ggplot(aes(x = ged_math, y = sex, fill = sex)) +
+  geom_violin() +
+  geom_jitter(alpha = 0.3, height = 0.2) +
+  geom_vline(xintercept = c(145,165,175), color = "#333333") +
+  geom_text(data = label_ged, aes(x = x, y = y, label = label, fill = NULL), color = "#333333", size = 3) +
+  theme_minimal() + 
+  labs(title = "GED distribution by Sex", caption = "Lines indicate levels of proficiency", 
+       x = "GED Math Score", y = "Sex") +
+  #facet_wrap(vars(loc), ncol = 3) +
+  theme(legend.position = "none")
+```
+
+<div class="pagebreak"> </div>
+
+Based on this boxplot, the younger age groups tend to have a slightly higher mean GED mathematics score. We also see a majoirty of the test takers who pass are in the 21 to 25 age range.
+
+```{r}
+#age plot
+label_ged = data.frame(x = c(155,170,180), y = rep(6.75,3),
+    label = c("High school Equivalent", "College Ready", "College Credit"))
+ged %>%  
+  mutate(age_level = fct_rev(age_level)) %>% 
+  ggplot(aes(x = ged_math, y = age_level, fill = age_level)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(alpha = 0.3, height = 0.1) +
+  geom_vline(xintercept = c(145,165,175), color = "#999999") +
+  scale_fill_brewer(palette = "Greens") +
+  geom_text(data = label_ged, aes(x = x, y = y, label = label, fill = NULL)) +
+  expand_limits(y = c(0.5,7)) +
+  theme_minimal() + 
+  labs(title = "GED distribution by Age Group", caption = "Lines indicate levels of proficiency", 
+       x = "GED Math Score", y = "Age Group") +
+  #facet_wrap(vars(loc), ncol = 3) +
+  theme(legend.position = "none")
+```
+
+<div class="pagebreak"> </div>
+
+We do see that there are facilities with higher average scores, but those mean averages of the highest facilities are less than five points higher then the facility with the lowest average. 
+
+```{r}
+#facility plot
+label_ged = data.frame(x = c(155,170,180), y = rep(8.65,3),
+    label = c("High school Equivalent", "College Ready", "College Credit"))
+ged %>%  
+  mutate(loc = fct_reorder(loc, ged_math)) %>% 
+  ggplot(aes(x = ged_math, y = loc, fill = loc)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(alpha = 0.3, height = 0.1) +
+  geom_vline(xintercept = c(145,165,175), color = "#999999") +
+  geom_text(data = label_ged, aes(x = x, y = y, label = label, fill = NULL)) +
+  expand_limits(y = c(0.5,9)) +
+  theme_minimal() + 
+  labs(title = "GED distribution by Location", caption = "Lines indicate levels of proficiency", 
+       x = "GED Math Score", y = "Facility") +
+  #facet_wrap(vars(loc), ncol = 3) +
+  theme(legend.position = "none")
+```
+
+<div class="pagebreak"> </div>
+
+We can see based on this boxplot, maximum security level facilities have the lowest average GED Math scores and we can see that minimum level security has the higherst mean.
+
+```{r}
+#security Level
+label_ged = data.frame(x = c(155,170,180), y = rep(4.7,3),label = c("High school Equivalent", "College Ready", "College Credit"))
+ged %>%  
+  filter(!is.na(security)) %>% 
+  mutate(loc = fct_reorder(security, ged_math)) %>% 
+  ggplot(aes(x = ged_math, y = security, fill = security)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(alpha = 0.3, height = 0.1) +
+  geom_vline(xintercept = c(145,165,175), color = "#999999") +
+  scale_fill_brewer(palette = "RdYlGn", direction = -1) +
+  geom_text(data = label_ged, aes(x = x, y = y, label = label, fill = NULL)) +
+  expand_limits(y = c(0.5,5)) +
+  theme_minimal() + 
+  labs(title = "GED distribution by Security Level", caption = "Lines indicate levels of proficiency", 
+       x = "GED Math Score", y = "Facility") +
+  #facet_wrap(vars(loc), ncol = 3) +
+  theme(legend.position = "none")
+
+```
+
+<div class="pagebreak"> </div>
+
+ The general shape of the distribution of both the white and hispanic populations are extremely similar.  We do see that the only ethnicity that has test takers in the highest passing category is white based on the data given. 
+
+```{r}
+#ethnicity plot
+label_ged = data.frame(x = c(155,170,180), y = rep(5.75,3),
+    label = c("High school Equivalent", "College Ready", "College Credit"))
+ged %>%  
+  mutate(race = fct_reorder(race, ged_math)) %>% 
+  ggplot(aes(x = ged_math, y = race, fill = race)) +
+  geom_violin() +
+  geom_jitter(alpha = 0.3, height = 0.2) +
+  geom_vline(xintercept = c(145,165,175), color = "#333333") +
+  #geom_text(data = label_ged, aes(x = x, y = y, label = label, fill = NULL), color = "#333333") +
+  scale_fill_brewer(palette = "Set3") +
+  geom_text(data = label_ged, aes(x = x, y = y, label = label, fill = NULL)) +
+  expand_limits(y = c(0.5,6)) +
+  theme_minimal() + 
+  labs(title = "GED distribution by Ethnicity", caption = "Lines indicate levels of proficiency", 
+       x = "GED Math Score", y = "Ethnicity") +
+  #facet_wrap(vars(loc), ncol = 3) +
+  theme(legend.position = "none")
+```
+
+
+
+
+# Discussion
+
+The topic explored for this project combines a variety of topics from different disciplines and is something that combined both my passion and other interests. This statistical summary can be used in a variety of instances. One example is to utilize it to motivate the residents in correctional facilities. It shows that everyone has the ability to succeed equally in the GED mathematics portion. In the future, a similar summary could be done for other states correctional facilities to see how each state compares and why some states are more or less successful. To see if there are other correlations, it could be useful in the future to have the data for the residents who did not pass and a larger time frame to have a larger sample size.
+
+<div class="pagebreak"> </div>
+
+# References
+
+Bannon, S. (2014). Why Do They Do It?: Motivations Of Educators In Correctional Facilities. Saint Louis Public Law Review, 33, 301-315. https://heinonline.org/HOL/P?h=hein.journals/stlpl33&i=333
+
+Benac, E. (2019, June 21). What Are GED TABE Scores? The Classroom. Retrieved November 29, 2022, from https://www.theclassroom.com/ged-tabe-scores-8272426.html
+
+Carver, L. J., & Harrison, L. M. (2016, May). Democracy and the Challenges of Correctional Education. Journal of Correctional Education, 67(1), 2-16. https://www.jstor.org/stable/26506624
+
+GED®: See What Is On The GED By Test Subject. (2022). GED. Retrieved November 29, 2022, from https://ged.com/en/curriculum/
+
+Hurkmans, G., & Gillijns, e. (2012). Mentoring Teachers In Prison Education- Experiences In Three Correctional Facilities In Belgium. Procedia - Social and Behavioral Sciences, 69, 2215-2218. https://www.sciencedirect.com/science/article/pii/S1877042812056558
+
+Idaho Department of Correction. (2019, June 30). Population Overview | Idaho Department of Correction. Idaho Department of Correction. Retrieved November 29, 2022, from https://www.idoc.idaho.gov/content/document/fy_2019_population_overview
+
+Idaho Department of Correction. (2021, September 29). Educational Practice, Procedures, and Placements. Education Practices, Procedures, and Placements - Laserfiche WebLink. Retrieved November 29, 2022, from http://forms.idoc.idaho.gov/WebLink/0/doc/273699/Page5.aspx
+
+Lockwood, S., Nally, J. M., Ho, T., & Knutson, K. (2012). The Effect of Correctional Education on Postrelease Employment and Recidivism: A 5-Year Follow-Up Study in the State of Indiana. Crime & Delinquency, 58(3), 380-396. https://journals.sagepub.com/doi/10.1177/0011128712441695
+
+Posit team (2023). RStudio: Integrated Development Environment for R. Posit Software, PBC, Boston, MA. URL http://www.posit.co/.
+
+R Core Team (2020). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+Test of Adult Basic Education. (2022). TABE Test for Adult Assessment | TABE Test for Adult Assessment. Retrieved November 29, 2022, from https://tabetest.com/
+
+What is a Passing GED Test Score? (2022). GED. Retrieved November 29, 2022, from https://ged.com/about_test/scores/
+
+Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen
+  TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani
+  H (2019). “Welcome to the tidyverse.” _Journal of Open Source Software_, *4*(43), 1686. doi:10.21105/joss.01686
+  <https://doi.org/10.21105/joss.01686>.
+
+
+<div class="pagebreak"> </div>
+
+# Appendix
+
+```{r result = "asis"}
+print(dfSummary(ged %>% 
+                  select(sex, race, age = age_level, site = loc, score = ged_math),
+                varnumbers   = FALSE, 
+                valid.col    = FALSE, 
+                graph.magnif = 0.76,
+                max.distinct.values = 14,
+                na.col = FALSE),
+      method = 'render')
+
+```
+
