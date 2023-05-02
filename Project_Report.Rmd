@@ -81,7 +81,7 @@ The Mathematical Reasoning test for the GED focuses on arithmetic, geometry, alg
 When residents first enter into an Idaho Department of Correction facility, they are given what is called a Test of Adult Basic Education (TABE) full battery test. TABE is used to evaluate residents’ reading, language, math computation,and applied math skills. It is used to determine a resident's aptitude when entering the facility and gives them a grade designation based on their abilities (Test of Adult Basic Education, 2022; see also Benac, 2019). Based on what grade designation they are given for both the Math and English on the exam, residents are given specific goals and certificates they can work toward while in the facilities.  Some of these include trade work, apprenticeships, and computer literacy (Idaho Department of Correction, 2021). 
 
 # Methods
-The first step for this project was to obtain the desired data. The data for this project came from the Idaho Department of Correction in a variety of formats. Some of it was online for the public to view and some had to be obtained from the department directly. The data that was received is 620 residents who have taken the GED in the department's custody. It has gender, ethnicity, age, GED testing location, GED testing date, GED score, as well as their TABE test date and score. This is for all subjects on both the GED and TABE test. This makes 620 rows and 24 columns. In the data about the testing centers, there are 13 rows and 10 columns which consists of the information; test center abbreviation, test center full name, how many tests were taken at each location, longitude and latitude, overall inmate population in 2019, security level, rider population information, gender of the facility, and the percentage of male inmates if it is a mixed gender population. Finally in the 2019 data that is public record online there are 41 rows and 4 columns which consist of age breakdown, gender, ethnicity, and number in 2019 based on a variety of combinations. 
+The first step for this project was to obtain the desired data. The data for this project came from the Idaho Department of Correction in a variety of formats. Some of it was online for the public to view and some had to be obtained from the department directly. The data that was received is 620 residents who have passed the GED in the department's custody. It has gender, ethnicity, age, GED testing location, GED testing date, GED score, as well as their TABE test date and score. This is for all subjects on both the GED and TABE test. This makes 620 rows and 24 columns. In the data about the testing centers, there are 13 rows and 10 columns which consists of the information; test center abbreviation, test center full name, how many tests were passed at each location, longitude and latitude, overall inmate population in 2019, security level, rider population information, gender of the facility, and the percentage of male inmates if it is a mixed gender population. Finally in the 2019 data that is public record online there are 41 rows and 4 columns which consist of age breakdown, gender, ethnicity, and number in 2019 based on a variety of combinations. 
 
 Once the data was obtained and cleaned, the variables of interest were identified. At this point all data was imported to *R* and the coding portion of this project was done to create a multitude of tables, charts, and graphs for each variable of interest individually and various combinations of variables in relation to the GED mathematics scores received. The most meaningful visuals were inputted into the results and interpreted. 
 
@@ -121,7 +121,7 @@ ged = ged_raw %>%
   filter(tabe_math < 1000)
 ```
 
-The GED data includes `r nrow(ged_raw)` test takers along with `r ncol(ged_raw)` columns of information about each test taker. The GED scores range from `r min(ged$ged_math)` to `r max(ged$ged_math)` (M = `r round(mean(ged$ged_math),1)`, SD = `r round(sd(ged$ged_math),1)`. Test takers range in age from `r min(ged$age_ged)` to `r max(ged$age_ged)` (M = `r round(mean(ged$age_ged), 1)`, SD = `r round(sd(ged$age_ged), 1)`). Test takers are classified by sex (Male, Female) and race (White, Hispanic, Black, Native American, Asian , Other, and Unknown). Based on where the test taker passed their mathematics GED test, they are grouped based on facility (CAPP, ICIO, IMSI, ISCC, ISCI, NICI, PWCC, SAWC, SBWCC, SICI, and Other). The final variable being looked at in relation to GED score is the TABE  score. This is a test given to residents when they enter a facility.  It allows IDOC to assess their knowledge in mathematics and RLA. The mathematics TABE  scores range from `r min(ged$tabe_math, na.rm=TRUE)` to `r max(ged$tabe_math, na.rm=TRUE)`(M = `r round(mean(ged$tabe_math,na.rm=TRUE), 1)`, SD = `r round(sd(ged$tabe_math,na.rm=TRUE), 1)`). 
+The GED data includes `r nrow(ged_raw)` test passers along with `r ncol(ged_raw)` columns of information about each test passer. The GED scores range from `r min(ged$ged_math)` to `r max(ged$ged_math)` (M = `r round(mean(ged$ged_math),1)`, SD = `r round(sd(ged$ged_math),1)`. Test passers range in age from `r min(ged$age_ged)` to `r max(ged$age_ged)` (M = `r round(mean(ged$age_ged), 1)`, SD = `r round(sd(ged$age_ged), 1)`). Test passers are classified by sex (Male, Female) and race (White, Hispanic, Black, Native American, Asian , Other, and Unknown). Based on where the test passer took their mathematics GED test, they are grouped based on facility (CAPP, ICIO, IMSI, ISCC, ISCI, NICI, PWCC, SAWC, SBWCC, SICI, and Other). The final variable being looked at in relation to GED score is the TABE  score. This is a test given to residents when they enter a facility.  It allows IDOC to assess their knowledge in mathematics and RLA. The mathematics TABE  scores range from `r min(ged$tabe_math, na.rm=TRUE)` to `r max(ged$tabe_math, na.rm=TRUE)`(M = `r round(mean(ged$tabe_math,na.rm=TRUE), 1)`, SD = `r round(sd(ged$tabe_math,na.rm=TRUE), 1)`). 
 
 
 
@@ -315,7 +315,7 @@ ged %>%
 
 <div class="pagebreak"> </div>
 
-We can see that a majority of the passing test takers are male, however they are a much larger percentage of the population so this is not surprising. What is shocking is that the male math test passers are responsible for the higher GED math scores and the bulk of the test takers scores are slightly higher then the females. 
+We can see that a majority of the passing test takers are male which is represented in the general population of incarcerated people. We would expect a tapering off to create a cone like shape in the data, however there is a small bump in this shape in both male and female between the score of 155-160. This could be because of various things, one of which is some sort of pretest material that some test takers use that improves their score. 
 
 ```{r}
 #gender plot
@@ -335,7 +335,7 @@ ged %>%
 
 <div class="pagebreak"> </div>
 
-Based on this boxplot, the younger age groups tend to have a slightly higher mean GED mathematics score. We also see a majoirty of the test takers who pass are in the 21 to 25 age range.
+Based on this boxplot, the younger age groups tend to have a slightly higher mean GED mathematics score.  The largest jumps between mean scores looks to be between the 18-20 and 21-25 age ranges and 36-40 and 41+ age ranges. We also see a majority of the test takers who pass are in the 21 to 25 age range. There does not seem to be a direct correlation between age and gaining a score that puts the test passer in the college credit range. 
 
 ```{r}
 #age plot
@@ -382,7 +382,7 @@ ged %>%
 
 <div class="pagebreak"> </div>
 
-We can see based on this boxplot, maximum security level facilities have the lowest average GED Math scores and we can see that minimum level security has the higherst mean.
+We can see based on this boxplot, maximum security level facilities have the lowest average GED Math scores but also the smallest amount of standard deviation in scores and we can see that minimum level security has the highest mean. A majority of the GED mathematics passers fall in the category of minimum level security. 
 
 ```{r}
 #security Level
@@ -407,8 +407,7 @@ ged %>%
 
 <div class="pagebreak"> </div>
 
- The general shape of the distribution of both the white and hispanic populations are extremely similar.  We do see that the only ethnicity that has test takers in the highest passing category is white based on the data given. 
-
+ The general shape of the distribution of both the white and hispanic populations are extremely similar however, the distributions are hard to compare because of the uneven number of residents in each category.  We do see that the only ethnicity that has test takers in the highest passing category is white based on the data given. 
 ```{r}
 #ethnicity plot
 label_ged = data.frame(x = c(155,170,180), y = rep(5.75,3),
@@ -435,7 +434,12 @@ ged %>%
 
 # Discussion
 
-The topic explored for this project combines a variety of topics from different disciplines and is something that combined both my passion and other interests. This statistical summary can be used in a variety of instances. One example is to utilize it to motivate the residents in correctional facilities. It shows that everyone has the ability to succeed equally in the GED mathematics portion. In the future, a similar summary could be done for other states correctional facilities to see how each state compares and why some states are more or less successful. To see if there are other correlations, it could be useful in the future to have the data for the residents who did not pass and a larger time frame to have a larger sample size.
+The topic explored for this project combines a variety of topics from different disciplines and is something that combined both my passion and other interests. This statistical summary can be used in a variety of instances. It is something that could be extremely motivational for the residents at facilities. It shows that no matter what their background is, they have an equal chance at succeeding on the mathematics portion of the GED. This could also be used as a tool for correctional educator to show that every single one of their students has the ability to pass and we can help inspire them and push them to do their best and succeed. If the Idaho Department of Correction was to further research this topic, there could be exploration into both passers and not passers of the GED.  I am curious if the distribution of all test scores would be somewhat of a normal curve or if it would be skewed in some way. It could be used to see if TABE score has a more impactful correlation when there is data on all test takers. It could also be used to compare first time test takers to residents who have taken the GED mathematics test multiple times.  Research could also be done to look more into the recidivism rates and how education plays a part in the decrease of those rates in Idaho. 
+
+In the future, a similar summary could be done for other states correctional facilities to see how each state compares and why some states are more or less successful.  This could be done with either states with similar demographics to see how similar they are or states with completely different demographics to see if they certain variables have more of an impact when the data sample is more evenly split between groups. There could also be some comparison to the general population of the GED. If we have information about both populations passers and no passers, we could compare the distributions and average passing rate. 
+
+During my time working on this project, I found some things shocking. One of which was the fact that male test takers had a mean passing score that was two points higher than females. This was unexpected because in general, females score higher academically so the much larger mean for male passers was unexpected. Another thing that was a bit surprising was the very little I found from the data set that I was given. I was hoping to find at least one correlation between the variables I looked at and the GED math test scores for passers, but that means there is a lot more to look at and discover. This project has helped me develop more coding abilities in *R*. The things that I learned and enjoyed the most in the program were how to create a visually appealing chart that is easy to understand and interpret as well as troubleshooting all of the problems that I ran into that were both in and out of my control. Previously to working on this project, I enjoyed the criminal justice field and found it extremely interesting and the time I spent working on this has only strengthened that passion. I hope that I can combine my love for mathematics, education, and corrections in my future endeavors. I think that what I have learned from this would be something that I would use to inspire students and create a learning environment that is positive and welcoming to all residents. 
+
 
 <div class="pagebreak"> </div>
 
